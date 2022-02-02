@@ -1,0 +1,12 @@
+---
+- hosts: web
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: FIREWALLD | Install
+      include_role:
+        name: install_firewalld
+
+    - name: APACHE | Install
+      include_role:
+        name: install_apache
