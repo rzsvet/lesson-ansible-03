@@ -18,11 +18,11 @@
       The current 
       date: {{ ansible_date_time.date }}
 
-- name: APACHE | Enable HTTP porn on firewall
+- name: APACHE | Enable HTTP porn on firewall {{ http_port }}/tcp
   ansible.builtin.firewalld:
-    zone: public
-    service: http
+    port: "{{ http_port }}/tcp"
     permanent: true
+    immediate: true
     state: enabled
 
 - name: APACHE | Put config from template 

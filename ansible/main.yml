@@ -8,5 +8,11 @@
         name: install_firewalld
 
     - name: APACHE | Install
+      vars:
+        http_port: 8080
       include_role:
         name: install_apache
+
+    - name: FTP | Install
+      include_role:
+        name: install_ftp
