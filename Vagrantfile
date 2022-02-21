@@ -5,14 +5,14 @@ $client_script = <<-'SCRIPT'
 echo -e '192.168.56.110 control.example.com control\n192.168.56.111 node1.example.com node1\n192.168.56.112 node2.example.com node2' >> /etc/hosts
 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config && systemctl restart sshd
 sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+sed -i 's|#baseurl=http://mirror.centos.org/$contentdir/$releasever|baseurl=http://mirror.chpc.utah.edu/pub/vault.centos.org/8.3.2011|g' /etc/yum.repos.d/CentOS-*
 SCRIPT
 
 $server_script = <<-'SCRIPT'
 echo -e '192.168.56.110 control.example.com control\n192.168.56.111 node1.example.com node1\n192.168.56.112 node2.example.com node2' >> /etc/hosts
 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config && systemctl restart sshd
 sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+sed -i 's|#baseurl=http://mirror.centos.org/$contentdir/$releasever|baseurl=http://mirror.chpc.utah.edu/pub/vault.centos.org/8.3.2011|g' /etc/yum.repos.d/CentOS-*
 sudo yum -y install epel-release
 sudo yum -y install ansible
 pip3 install ansible-lint "ansible>=2.9,<2.10"

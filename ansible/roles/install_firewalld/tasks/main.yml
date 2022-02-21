@@ -1,10 +1,11 @@
 ---
-- name: APACHE | Install the latest version of Firewalld
+- name: FIREWALLD | Install the latest version of Firewalld
   yum:
     name: firewalld
     state: latest
-- name: APACHE | Start service firewalld, if not started
-  service:
+
+- name: FIREWALLD | Start service firewalld, if not started
+  ansible.builtin.systemd:
     name: firewalld
     state: started
     enabled: yes

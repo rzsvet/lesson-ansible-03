@@ -1,5 +1,16 @@
 ---
 - name: FTP | Restart vsftpd
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: vsftpd
     state: restarted
+
+- name: SELINUX | Run restore context to reload selinux
+  shell: restorecon -Rv /var/ftp/pub/{{ item }}
+  with_items: "{{ ftp_folders }}"
+
+- name: FIREWALLD | Reload Firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: reloaded
+# - name: SERVER | Reboot
+#   reboot:

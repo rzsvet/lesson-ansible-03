@@ -1,18 +1,62 @@
 ---
+- name: FTP | Install Python and modules
+  yum:
+    name:
+      - python3
+      - python3-pip
+      - python3-libselinux
+      - python3-libsemanage
+      - python3-policycoreutils
+    state: present
+
+- name: FTP | Create public directory /var/ftp/pub/upload
+  ansible.builtin.file:
+    path: "/var/ftp/pub/{{ item }}"
+    state: directory
+    mode: "0777"
+  with_items: "{{ ftp_folders }}"
+
 - name: FTP | Install the latest version of vsftpd
   ansible.builtin.yum:
     name: vsftpd
     state: latest
 
 - name: FTP | Start service vsftpd, if not started
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: vsftpd
     state: started
     enabled: yes
 
-- name: FTP | Put config from template 
+- name: FTP | Put config from template
   ansible.builtin.template:
     src: vsftpd.conf.j2
     dest: /etc/vsftpd/vsftpd.conf
   notify:
     - FTP | Restart vsftpd
+
+- name: FTP | Enable FTP service on firewall
+  ansible.builtin.firewalld:
+    service: ftp
+    permanent: true
+    immediate: true
+    state: enabled
+  notify:
+    - FIREWALLD | Reload Firewalld
+
+- name: FTP | Set ftpd_anon_write flag on and keep it persistent across reboots
+  seboolean:
+    name: allow_ftpd_anon_write
+    state: yes
+    persistent: yes
+  # notify:
+  #   - SERVER | Reboot
+
+- name: FTP | Set selinux policy for directories
+  sefcontext:
+    target: "/var/ftp/pub/{{ item }}"
+    setype: "public_content_rw_t"
+    reload: True
+    state: present
+  with_items: "{{ ftp_folders }}"
+  notify:
+    - SELINUX | Run restore context to reload selinux

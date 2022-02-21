@@ -4,10 +4,10 @@
     name: httpd
     state: latest
 
-- name: APACHE | Start service httpd, if not started
-  ansible.builtin.service:
+- name: APACHE | Enable service httpd
+  ansible.builtin.systemd:
     name: httpd
-    state: started
+    state: stopped
     enabled: yes
 
 - name: APACHE | Creating a file with content
@@ -24,10 +24,15 @@
     permanent: true
     immediate: true
     state: enabled
+  notify:
+    - FIREWALLD | Reload Firewalld
 
-- name: APACHE | Put config from template 
+- name: APACHE | Put config from template
   ansible.builtin.template:
     src: httpd.conf.j2
     dest: /etc/httpd/conf/httpd.conf
-  notify:
-    - APACHE | Restart apache
+
+- name: APACHE | Start service httpd, if not started
+  ansible.builtin.systemd:
+    name: httpd
+    state: started

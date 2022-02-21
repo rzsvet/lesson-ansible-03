@@ -14,5 +14,9 @@
         name: install_apache
 
     - name: FTP | Install
+      vars:
+        ftpd_banner: "Welcome to My FTP service."
+        ftp_folders:
+          - upload
       include_role:
         name: install_ftp
